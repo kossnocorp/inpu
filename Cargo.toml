@@ -1,7 +1,11 @@
 [package]
 name = "inpu"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
+description = "CLI tool to measure JavaScript library bundle size"
+authors = ["Sasha Koss <koss@nocorp.me>"]
+license = "MIT"
+repository = "https://github.com/kossnocorp/inpu"
 
 [dependencies]
 brotli = "6.0.0"
