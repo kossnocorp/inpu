@@ -54,13 +54,9 @@ pub fn weight_command(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> 
         })
     }
 
-    let mut total_len: usize = 0;
-    let mut total_size: usize = 0;
+    let mut bundled_source: Vec<u8> = vec![];
 
     weights.into_iter().for_each(|weight| {
-        total_len += weight.source.len();
-        total_size += weight.size;
-
         println!("{}", weight.path.to_str().expect("Can't convert the path"));
         println!("");
         println!("Source code:");
@@ -70,10 +66,14 @@ pub fn weight_command(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> 
         println!("Size:   {} bytes", weight.size);
         println!("Length: {}", weight.source.len());
         println!("");
+
+        bundled_source.extend(weight.source.as_bytes());
     });
 
+    let total_size = measure_compressed(&bundled_source);
+
     println!("Total size:   {} bytes", total_size);
-    println!("Total length: {}", total_len);
+    println!("Total length: {}", bundled_source.len());
 
     Ok(())
 }
@@ -162,11 +162,7 @@ pub fn weight_file(path: PathBuf) -> Result<Weight, Box<dyn std::error::Error>> 
         emitter.emit_module(&minified_module).unwrap();
     }
 
-    let mut compressed_buf = vec![];
-    {
-        let mut writer = brotli::CompressorWriter::new(&mut compressed_buf, 4096, 11, 22);
-        writer.write_all(&code_buf).expect("Failed to compress");
-    }
+    let size = measure_compressed(&code_buf);
 
     let output = String::from_utf8(code_buf).unwrap();
 
@@ -174,10 +170,19 @@ pub fn weight_file(path: PathBuf) -> Result<Weight, Box<dyn std::error::Error>> 
         path,
         imports,
         source: output,
-        size: compressed_buf.len(),
+        size,
     };
 
     Ok(weight)
+}
+
+fn measure_compressed(buf: &Vec<u8>) -> usize {
+    let mut compressed_buf = vec![];
+    {
+        let mut writer = brotli::CompressorWriter::new(&mut compressed_buf, 4096, 11, 22);
+        writer.write_all(buf).expect("Failed to compress");
+    }
+    compressed_buf.len()
 }
 
 struct Visitor<'a> {
