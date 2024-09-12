@@ -1,0 +1,16 @@
+[package]
+name = "inpu"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+brotli = "6.0.0"
+clap = { version = "4.5.17", features = ["derive"] }
+colored = "2.1.0"
+swc_common = { version = "0.38.0", features = ["tty-emitter"] }
+swc_ecma_ast = "0.119.0"
+swc_ecma_codegen = "0.156.1"
+swc_ecma_minifier = "0.206.0"
+swc_ecma_parser = "0.150.0"
+swc_ecma_transforms_typescript = "0.200.0"
+swc_ecma_visit = "0.105.0"
