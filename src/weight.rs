@@ -194,4 +194,14 @@ impl Visit for Visitor<'_> {
     fn visit_import_decl(&mut self, node: &swc_ecma_ast::ImportDecl) {
         self.imports.push(node.src.value.to_string());
     }
+
+    fn visit_export_all(&mut self, node: &swc_ecma_ast::ExportAll) {
+        self.imports.push(node.src.value.to_string());
+    }
+
+    fn visit_named_export(&mut self, node: &swc_ecma_ast::NamedExport) {
+        if let Some(src) = &node.src {
+            self.imports.push(src.value.to_string());
+        }
+    }
 }
