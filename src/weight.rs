@@ -59,12 +59,9 @@ pub fn weight_command(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> 
     weights.into_iter().for_each(|weight| {
         println!("{}", weight.path.to_str().expect("Can't convert the path"));
         println!("");
-        println!("Source code:");
-        println!("");
         println!("{}", weight.source.dimmed());
         println!("");
-        println!("Size:   {} bytes", weight.size);
-        println!("Length: {}", weight.source.len());
+        println!("{} bytes / {} chars", weight.size, weight.source.len());
         println!("");
 
         bundled_source.extend(weight.source.as_bytes());
@@ -72,8 +69,12 @@ pub fn weight_command(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> 
 
     let total_size = measure_compressed(&bundled_source);
 
-    println!("Total size:   {} bytes", total_size);
-    println!("Total length: {}", bundled_source.len());
+    println!(
+        "{}: {} bytes / {} chars",
+        "Total".blue().bold(),
+        total_size,
+        bundled_source.len()
+    );
 
     Ok(())
 }
