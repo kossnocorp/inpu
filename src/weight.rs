@@ -49,7 +49,9 @@ pub fn weight_command(path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> 
 
         import_paths.iter().for_each(|import_path| {
             if let None = weights.iter().find(|w| w.path == *import_path) {
-                queue.push(import_path.clone());
+                if let None = queue.iter().find(|p| **p == *import_path) {
+                    queue.push(import_path.clone());
+                }
             }
         })
     }
